@@ -17,7 +17,7 @@ import Halogen.HTML.Properties as HP
 import Layouts.Footer as LFooter
 import Layouts.Header as LHeader
 import Routers as RT
-import Routing (match)
+import Routing.Hash (matches)
 
 data Query a = GOTO RT.Routes a
 
@@ -63,7 +63,7 @@ component = H.parentComponent
       pure next
 
 
-matchRoutes :: forall eff. H.HalogenIO Query Void Aff -> Effect Unit
-matchRoutes app = match RT.routing (redirects app)
+matchRoutes :: H.HalogenIO Query Void Aff -> Effect Unit
+matchRoutes app = join $ matches RT.routing (redirects app)
   where
     redirects driver _ = launchAff_ <<< driver.query <<< H.action <<< GOTO
